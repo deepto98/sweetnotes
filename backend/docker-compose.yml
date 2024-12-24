@@ -1,0 +1,17 @@
+version: '3.9'
+
+services:
+  mongo:
+    image: mongo:latest
+    container_name: sweetnotes-mongo
+    restart: always
+    ports:
+      - "27017:27017" # Expose MongoDB on port 27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin # Default MongoDB admin username
+      MONGO_INITDB_ROOT_PASSWORD: password # Default MongoDB admin password
+    volumes:
+      - mongo-data:/data/db # Persistent storage for MongoDB data
+
+volumes:
+  mongo-data:
