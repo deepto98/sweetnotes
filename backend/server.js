@@ -47,6 +47,13 @@ app.post("/api/notes", async (req, res) => {
     return res.status(400).json({ error: "All fields are required." });
   }
 
+  // Validate sender, receiver, and message are strings
+  if (typeof sender !== 'string' || typeof receiver !== 'string' || typeof message !== 'string') {
+    return res.status(400).json({
+      error: 'Sender, receiver, and message must be strings.',
+    });
+  }
+
   // Validate revealDate format
   if (!isValidDate(revealDate)) {
     return res.status(400).json({ error: "Invalid revealDate format." });
