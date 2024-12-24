@@ -1,8 +1,8 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
-const cors = require('cors');
-require('dotenv').config();
+const express = require("express");
+const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
+const cors = require("cors");
+require("dotenv").config();
 
 const app = express();
 
@@ -11,9 +11,13 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // MongoDB Connection
-mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log('Connected to MongoDB'))
-  .catch(err => console.error('MongoDB connection error:', err));
+mongoose
+  .connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log("Connected to MongoDB"))
+  .catch((err) => console.error("MongoDB connection error:", err));
 
 // Note Schema and Model
 const noteSchema = new mongoose.Schema({
@@ -23,20 +27,45 @@ const noteSchema = new mongoose.Schema({
   revealDate: Date,
 });
 
-const Note = mongoose.model('Note', noteSchema);
+const Note = mongoose.model("Note", noteSchema);
 
 // Routes
+
 // 1. Create a note
-app.post('/api/notes', async (req, res) => {
+
+// Utility function to validate date strings
+const isValidDate = (dateString) => {
+  const date = new Date(dateString);
+  return !isNaN(date.getTime()); // Check if the date is valid
+};
+
+app.post("/api/notes", async (req, res) => {
   const { sender, receiver, message, revealDate } = req.body;
 
+  // Validate required fields aren't empty
   if (!sender || !receiver || !message || !revealDate) {
-    return res.status(400).json({ error: 'All fields are required' });
+    return res.status(400).json({ error: "All fields are required." });
   }
 
-  const note = new Note({ sender, receiver, message, revealDate });
-  await note.save();
-  res.json({ id: note._id });
+  // Validate revealDate format
+  if (!isValidDate(revealDate)) {
+    return res.status(400).json({ error: "Invalid revealDate format." });
+  }
+
+  try {
+    const note = new Note({
+      sender,
+      receiver,
+      message,
+      revealDate: new Date(revealDate), // Ensure it's stored as a Date object
+    });
+
+    await note.save();
+    res.status(200).json({ id: note._id });
+  } catch (err) {
+    console.error("Error creating note:", err);
+    res.status(500).json({ error: "Internal server error." });
+  }
 });
 
 // 2. Get a note by ID
@@ -45,19 +74,19 @@ app.post('/api/notes', async (req, res) => {
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
 // Get a note by ID
-app.get('/api/notes/:id', async (req, res) => {
+app.get("/api/notes/:id", async (req, res) => {
   const noteId = req.params.id;
 
   // Validate ObjectId format
   if (!isValidObjectId(noteId)) {
-    return res.status(400).json({ error: 'Invalid note ID format.' });
+    return res.status(400).json({ error: "Invalid note ID format." });
   }
 
   try {
     const note = await Note.findById(noteId);
 
     if (!note) {
-      return res.status(404).json({ error: 'Note not found.' });
+      return res.status(404).json({ error: "Note not found." });
     }
 
     // Check if the reveal date has passed
@@ -66,7 +95,7 @@ app.get('/api/notes/:id', async (req, res) => {
       return res.json({
         sender: note.sender,
         receiver: note.receiver,
-        message: 'This message is hidden until the reveal date.',
+        message: "This message is hidden until the reveal date.",
         revealDate: note.revealDate,
       });
     }
@@ -74,8 +103,8 @@ app.get('/api/notes/:id', async (req, res) => {
     // If the reveal date has passed, return the full note
     res.json(note);
   } catch (err) {
-    console.error('Error fetching note:', err);
-    res.status(500).json({ error: 'Internal server error.' });
+    console.error("Error fetching note:", err);
+    res.status(500).json({ error: "Internal server error." });
   }
 });
 
