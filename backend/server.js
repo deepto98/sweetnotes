@@ -40,29 +40,43 @@ app.post('/api/notes', async (req, res) => {
 });
 
 // 2. Get a note by ID
+
+// Utility function to check if a string is a valid ObjectId
+const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
+
+// Get a note by ID
 app.get('/api/notes/:id', async (req, res) => {
-  const { id } = req.params;
-  const note = await Note.findById(id);
+  const noteId = req.params.id;
 
-  if (!note) {
-    return res.status(404).json({ error: 'Note not found' });
+  // Validate ObjectId format
+  if (!isValidObjectId(noteId)) {
+    return res.status(400).json({ error: 'Invalid note ID format.' });
   }
 
-  const now = new Date();
-  if (now < new Date(note.revealDate)) {
-    return res.json({
-      sender: note.sender,
-      receiver: note.receiver,
-      revealDate: note.revealDate,
-      message: 'Hidden until reveal date!',
-    });
-  }
+  try {
+    const note = await Note.findById(noteId);
 
-  res.json({
-    sender: note.sender,
-    receiver: note.receiver,
-    message: note.message,
-  });
+    if (!note) {
+      return res.status(404).json({ error: 'Note not found.' });
+    }
+
+    // Check if the reveal date has passed
+    const currentDate = new Date();
+    if (currentDate < new Date(note.revealDate)) {
+      return res.json({
+        sender: note.sender,
+        receiver: note.receiver,
+        message: 'This message is hidden until the reveal date.',
+        revealDate: note.revealDate,
+      });
+    }
+
+    // If the reveal date has passed, return the full note
+    res.json(note);
+  } catch (err) {
+    console.error('Error fetching note:', err);
+    res.status(500).json({ error: 'Internal server error.' });
+  }
 });
 
 // Start Server
