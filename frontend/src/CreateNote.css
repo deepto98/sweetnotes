@@ -1,0 +1,44 @@
+.create-note-container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin: 20px 0;
+}
+
+.create-note-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.create-note-form label {
+    font-size: 1rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.create-note-form input,
+.create-note-form textarea,
+.create-note-form button {
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+}
+
+.create-note-form button {
+    background-color: #28a745;
+    color: white;
+    cursor: pointer;
+}
+
+.create-note-form button:hover {
+    background-color: #218838;
+}
+
+.error {
+    color: red;
+    font-size: 0.9rem;
+}
