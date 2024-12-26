@@ -1,84 +1,81 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import './CreateNote.css';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-const CreateNote = () => {
-    const [formData, setFormData] = useState({
-        sender: '',
-        receiver: '',
-        message: '',
-        revealDate: '',
-    });
-    const [error, setError] = useState(null);
-    const navigate = useNavigate();
+function CreateNote() {
+  const [sender, setSender] = useState("");
+  const [receiver, setReceiver] = useState("");
+  const [message, setMessage] = useState("");
+  const [revealDate, setRevealDate] = useState("");
+  const navigate = useNavigate();
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
-    };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setError(null);
+    try {
+      const response = await fetch("http://localhost:5000/api/notes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sender, receiver, message, revealDate }),
+      });
 
-        try {
-            const response = await axios.post('http://localhost:5000/api/notes', formData);
-            const createdNoteId = response.data._id;
-            navigate(`/notes/${createdNoteId}`);
-        } catch (err) {
-            setError('Failed to create the note. Please check the inputs.');
-        }
-    };
+      if (response.ok) {
+        const data = await response.json();
+        const noteId = data.id; // Extract the note ID
+        navigate(`/notes/${noteId}`); // Redirect to the note's page
+      } else {
+        alert("Failed to create the note. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error creating note:", error);
+      alert("An error occurred. Please try again later.");
+    }
+  };
 
-    return (
-        <div className="create-note-container">
-            <h2>Create a Note</h2>
-            {error && <p className="error">{error}</p>}
-            <form onSubmit={handleSubmit} className="create-note-form">
-                <label>
-                    Sender Name
-                    <input
-                        type="text"
-                        name="sender"
-                        value={formData.sender}
-                        onChange={handleChange}
-                        required
-                    />
-                </label>
-                <label>
-                    Receiver Name
-                    <input
-                        type="text"
-                        name="receiver"
-                        value={formData.receiver}
-                        onChange={handleChange}
-                        required
-                    />
-                </label>
-                <label>
-                    Message
-                    <textarea
-                        name="message"
-                        value={formData.message}
-                        onChange={handleChange}
-                        required
-                    />
-                </label>
-                <label>
-                    Reveal Date
-                    <input
-                        type="datetime-local"
-                        name="revealDate"
-                        value={formData.revealDate}
-                        onChange={handleChange}
-                        required
-                    />
-                </label>
-                <button type="submit">Create Note</button>
-            </form>
-        </div>
-    );
-};
+  return (
+    <div className="create-note-container">
+      <h1 className="title">Sweetnotes</h1>
+      <form className="note-form" onSubmit={handleSubmit}>
+        <label className="form-label">Sender</label>
+        <input
+          type="text"
+          className="form-input"
+          value={sender}
+          onChange={(e) => setSender(e.target.value)}
+          required
+        />
+
+        <label className="form-label">Receiver</label>
+        <input
+          type="text"
+          className="form-input"
+          value={receiver}
+          onChange={(e) => setReceiver(e.target.value)}
+          required
+        />
+
+        <label className="form-label">Message</label>
+        <textarea
+          className="form-textarea"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          required
+        ></textarea>
+
+        <label className="form-label">Reveal Date</label>
+        <input
+          type="datetime-local"
+          className="form-input"
+          value={revealDate}
+          onChange={(e) => setRevealDate(e.target.value)}
+          required
+        />
+
+        <button className="submit-button" type="submit">
+          Create Note
+        </button>
+      </form>
+    </div>
+  );
+}
 
 export default CreateNote;
