@@ -33,7 +33,7 @@ function CreateNote() {
 
   return (
     <div className="create-note-container">
-      <h1 className="title">Sweetnotes</h1>
+      <h1 className="title"  onClick={() => navigate("/")}>Sweetnotes</h1>
       <form className="note-form" onSubmit={handleSubmit}>
         <label className="form-label">Sender</label>
         <input

@@ -35,6 +35,11 @@ a {
   text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
   margin-bottom: 30px;
   text-align: center;
+  cursor: pointer; /* Change cursor to pointer */
+}
+
+.title:hover {
+  color: #ff4c3b; /* Optional: Slightly change color on hover */
 }
 
 .note-form,

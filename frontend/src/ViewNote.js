@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 // import "./ViewNote.css";
 
 function ViewNote() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [note, setNote] = useState(null);
   const [error, setError] = useState("");
   const [copyButtonText, setCopyButtonText] = useState("Copy Link");
@@ -48,7 +49,7 @@ function ViewNote() {
 
   return (
     <div className="view-note-container">
-      <h1 className="title">Sweetnotes</h1>
+      <h1 className="title"  onClick={() => navigate("/")}>Sweetnotes</h1>
       <div className="note-box">
         {error ? (
           <p className="error-message">{error}</p>
