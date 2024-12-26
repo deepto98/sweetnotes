@@ -1,7 +1,7 @@
 /* Global Styles */
 body {
   font-family: 'Roboto', Arial, sans-serif;
-  background: linear-gradient(to bottom, #ffecd2, #fcb69f);
+  background: #ffecd2;
   margin: 0;
   padding: 0;
   color: #333333;
@@ -40,11 +40,11 @@ a {
 .note-form,
 .note-box {
   background: rgba(255, 255, 255, 0.9);
-  padding: 30px 50px;
+  padding: 30px 40px;
   border-radius: 12px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
   max-width: 450px;
-  width: 100%;
+  width: 90%; /* Default width for all devices */
   text-align: left;
   transition: all 0.3s ease;
 }
@@ -65,7 +65,7 @@ a {
 
 .form-input,
 .form-textarea {
-  width: 100%;
+  width: 92%;
   padding: 12px;
   margin-bottom: 20px;
   border: 2px solid #cccccc;
@@ -169,20 +169,55 @@ a {
   gap: 10px;
 }
 
-/* Media Queries */
-@media (max-width: 600px) {
-  .note-form,
-  .note-box {
-    padding: 20px 30px;
-  }
-
+/* Mobile Styles */
+@media (max-width: 768px) {
   .title {
     font-size: 2.5em;
+  }
+
+  .note-form,
+  .note-box {
+    padding: 20px 25px;
+    max-width: 350px; /* Reduced max width for tablets */
+    width: 95%;
+  }
+
+  .form-label {
+    font-size: 1em;
   }
 
   .submit-button,
   .copy-button,
   .whatsapp-button {
     font-size: 1em;
+    padding: 10px;
+  }
+
+  .share-buttons {
+    margin-top: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .title {
+    font-size: 2em;
+  }
+
+  .note-form,
+  .note-box {
+    padding: 15px 20px;
+    max-width: 300px; /* Reduced further for phones */
+    width: 100%;
+  }
+
+  .form-label {
+    font-size: 0.9em;
+  }
+
+  .submit-button,
+  .copy-button,
+  .whatsapp-button {
+    font-size: 0.9em;
+    padding: 8px;
   }
 }
