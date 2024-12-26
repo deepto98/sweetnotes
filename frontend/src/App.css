@@ -1,128 +1,123 @@
+/* Global Styles */
 body {
-  font-family: Arial, sans-serif;
-  background-color: #f9f9f9;
+  font-family: 'Roboto', Arial, sans-serif;
+  background: linear-gradient(to bottom, #ffecd2, #fcb69f);
   margin: 0;
   padding: 0;
+  color: #333333;
 }
 
-.create-note-container {
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* General Container Styles */
+.create-note-container,
+.view-note-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 50px;
+  padding: 50px 20px;
 }
 
 .title {
-  font-size: 2.5em;
+  font-size: 3em;
   color: #ff6f61;
+  font-weight: 700;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
   margin-bottom: 30px;
+  text-align: center;
 }
 
-.note-form {
-  background: #ffffff;
-  padding: 20px 40px;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  max-width: 400px;
+.note-form,
+.note-box {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 30px 50px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  max-width: 450px;
   width: 100%;
+  text-align: left;
+  transition: all 0.3s ease;
 }
 
+.note-form:hover,
+.note-box:hover {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* Form Styles */
 .form-label {
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   font-weight: bold;
-  color: #333333;
+  font-size: 1.1em;
+  color: #444444;
 }
 
 .form-input,
 .form-textarea {
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   margin-bottom: 20px;
-  border: 1px solid #cccccc;
-  border-radius: 4px;
+  border: 2px solid #cccccc;
+  border-radius: 6px;
   font-size: 1em;
+  background: #fdfdfd;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-input:focus,
+.form-textarea:focus {
+  border-color: #ff6f61;
+  box-shadow: 0 0 5px rgba(255, 111, 97, 0.4);
+  outline: none;
 }
 
 .form-textarea {
   resize: none;
-  height: 100px;
+  height: 120px;
 }
 
-.submit-button {
-  width: 100%;
-  padding: 10px 15px;
-  background-color: #ff6f61;
-  color: #ffffff;
-  font-size: 1.2em;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.submit-button:hover {
-  background-color: #ff4c3b;
-}
-
-.submit-button:active {
-  background-color: #e04334;
-}
-
-
-.view-note-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 50px;
-}
-
-.note-box {
-  background: #ffffff;
-  padding: 20px 40px;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  max-width: 400px;
-  width: 100%;
-  text-align: left;
-}
-
-.error-message {
-  color: #e04334;
-  font-weight: bold;
-  text-align: center;
-}
-
-.note-box p {
-  margin: 10px 0;
-  font-size: 1.1em;
-  color: #333333;
-}
-
-.note-box strong {
-  color: #ff6f61;
-}
-
-.share-buttons {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 20px;
-}
-
+/* Buttons */
+.submit-button,
 .copy-button,
 .whatsapp-button {
-  padding: 10px 20px;
-  font-size: 1em;
-  font-weight: bold;
-  color: #ffffff;
+  width: 100%;
+  padding: 12px 15px;
+  font-size: 1.2em;
+  font-weight: 600;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
+.submit-button {
+  background-color: #ff6f61;
+  color: #ffffff;
+}
+
+.submit-button:hover {
+  background-color: #e85a4f;
+}
+
+.submit-button:active {
+  background-color: #cc4f44;
+}
+
 .copy-button {
   background-color: #007bff;
+  color: #ffffff;
+  margin-bottom: 10px;
 }
 
 .copy-button:hover {
@@ -133,7 +128,9 @@ body {
   background-color: #25d366;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 10px;
+  color: #ffffff;
 }
 
 .whatsapp-button:hover {
@@ -145,8 +142,47 @@ body {
   height: 20px;
 }
 
-.copy-success {
-  margin-top: 10px;
-  color: #28a745;
+/* Error and Info */
+.error-message {
+  color: #e85a4f;
   font-weight: bold;
+  text-align: center;
+  margin: 20px 0;
+}
+
+.note-box p {
+  margin: 12px 0;
+  font-size: 1.1em;
+  line-height: 1.6;
+}
+
+.note-box strong {
+  color: #ff6f61;
+  font-weight: 600;
+}
+
+.share-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  margin-top: 20px;
+  gap: 10px;
+}
+
+/* Media Queries */
+@media (max-width: 600px) {
+  .note-form,
+  .note-box {
+    padding: 20px 30px;
+  }
+
+  .title {
+    font-size: 2.5em;
+  }
+
+  .submit-button,
+  .copy-button,
+  .whatsapp-button {
+    font-size: 1em;
+  }
 }

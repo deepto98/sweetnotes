@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+// import "./ViewNote.css";
 
 function ViewNote() {
   const { id } = useParams();
   const [note, setNote] = useState(null);
   const [error, setError] = useState("");
-  const [copySuccess, setCopySuccess] = useState("");
+  const [copyButtonText, setCopyButtonText] = useState("Copy Link");
 
-  const baseURL = "http://localhost:3000"; // Change this to your deployed frontend URL if hosting elsewhere.
+  const baseURL = "http://localhost:3000";
 
   useEffect(() => {
     const fetchNote = async () => {
@@ -31,8 +32,9 @@ function ViewNote() {
     const noteLink = `${baseURL}/notes/${id}`;
     navigator.clipboard
       .writeText(noteLink)
-      .then(() => setCopySuccess("Link copied to clipboard!"))
-      .catch(() => setCopySuccess("Failed to copy the link."));
+      .then(() => setCopyButtonText("Copied!"))
+      .catch(() => setCopyButtonText("Failed to Copy"));
+    setTimeout(() => setCopyButtonText("Copy Link"), 2000); // Reset after 2 seconds
   };
 
   const shareOnWhatsApp = () => {
@@ -62,11 +64,11 @@ function ViewNote() {
               <strong>Message:</strong> {note.message}
             </p>
             <p>
-              <strong>Reveal Date:</strong> {new Date(note.revealDate).toLocaleDateString()}
+              <strong>Reveal Date:</strong> {new Date(note.revealDate).toLocaleString()}
             </p>
             <div className="share-buttons">
               <button className="copy-button" onClick={copyToClipboard}>
-                Copy Link
+                {copyButtonText}
               </button>
               <button className="whatsapp-button" onClick={shareOnWhatsApp}>
                 <img
@@ -76,7 +78,6 @@ function ViewNote() {
                 />
                 WhatsApp
               </button>
-              {copySuccess && <p className="copy-success">{copySuccess}</p>}
             </div>
           </>
         ) : (
