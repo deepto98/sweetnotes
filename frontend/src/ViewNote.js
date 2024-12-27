@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 import logo from "./sweetnotes-logo.png";
 import CryptoJS from "crypto-js";
 
 function ViewNote() {
+  const [searchParams] = useSearchParams();
   const { id } = useParams();
-  const navigate = useNavigate();
   const [note, setNote] = useState(null);
   const [error, setError] = useState("");
   const [copyButtonText, setCopyButtonText] = useState("Copy Link");
+  const navigate = useNavigate();
+
   const backendUrl = process.env.REACT_APP_BACKEND_API_URL;
 
   // Dynamically get the base URL for the React app
@@ -16,59 +18,51 @@ function ViewNote() {
 
   useEffect(() => {
     const fetchNote = async () => {
+      const encryptionKey = searchParams.get("key");
+      if (!encryptionKey) {
+        setError("Encryption key missing from URL.");
+        return;
+      }
+
       try {
         const response = await fetch(`${backendUrl}/api/notes/${id}`);
         if (response.ok) {
           const data = await response.json();
-          const decryptedNote = decryptNote(data);
-          setNote(decryptedNote);
+
+          // Decrypt the message
+          const decryptedMessage = CryptoJS.AES.decrypt(
+            data.message,
+            encryptionKey,
+            { iv: data.iv }
+          ).toString(CryptoJS.enc.Utf8);
+          if (!decryptedMessage)
+            throw new Error("Failed to decrypt the message.");
+
+          setNote({
+            sender: data.sender,
+            receiver: data.receiver,
+            message: decryptedMessage,
+            revealDate: new Date(data.revealDate).toLocaleString("en-US", {
+              hour: "numeric",
+              minute: "numeric",
+              day: "numeric",
+              month: "numeric",
+              year: "numeric",
+              hour12: true,
+            }),
+          });
         } else {
           setError("Failed to fetch the note.");
         }
       } catch (error) {
+        console.error("Error fetching or decrypting the note:", error);
+
         setError("An error occurred. Please try again later.");
       }
     };
 
     fetchNote();
-  }, [id, backendUrl]);
-
-  // Function to decrypt the note
-  const decryptNote = ({
-    ciphertext,
-    iv,
-    keyHash,
-    sender,
-    receiver,
-    revealDate,
-  }) => {
-    const storedKey = localStorage.getItem("encryptionKey");
-    if (!storedKey) {
-      throw new Error("Encryption key not found. Cannot decrypt the note.");
-    }
-
-    // Verify the key by comparing hashes
-    const hashedKey = CryptoJS.SHA256(storedKey).toString();
-    if (hashedKey !== keyHash) {
-      throw new Error("The provided key does not match the encrypted data.");
-    }
-
-    // Decrypt the ciphertext
-    const decryptedMessage = CryptoJS.AES.decrypt(
-      ciphertext,
-      CryptoJS.enc.Hex.parse(storedKey),
-      {
-        iv: CryptoJS.enc.Hex.parse(iv),
-      }
-    ).toString(CryptoJS.enc.Utf8);
-
-    return {
-      message: decryptedMessage,
-      sender,
-      receiver,
-      revealDate,
-    };
-  };
+  }, [id, searchParams, backendUrl]);
 
   const copyToClipboard = () => {
     const noteLink = `${baseURL}/notes/${id}`;

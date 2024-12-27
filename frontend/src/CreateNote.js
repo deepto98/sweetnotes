@@ -21,20 +21,16 @@ function CreateNote() {
     e.preventDefault();
     setLoading(true); // Start loading
 
-    // Generate a 256-bit encryption key
-    const key = CryptoJS.lib.WordArray.random(32).toString();
-
-    // Encrypt the message
-    const iv = CryptoJS.lib.WordArray.random(16).toString(); //Initialization Vector
-    const encryptedMessage = CryptoJS.AES.encrypt(
-      message,
-      CryptoJS.enc.Hex.parse(key),
-      {
-        iv: CryptoJS.enc.Hex.parse(iv),
-      }
-    ).toString();
-
     try {
+      // Generate encryption key
+      const encryptionKey = CryptoJS.lib.WordArray.random(32).toString();
+
+      // Encrypt the message
+      const iv = CryptoJS.lib.WordArray.random(16).toString();
+      const encryptedMessage = CryptoJS.AES.encrypt(message, encryptionKey, {
+        iv,
+      }).toString();
+
       // Convert to ISO string with timezone included
       const revealDateISO = formatISO(revealDate);
 
@@ -53,7 +49,8 @@ function CreateNote() {
       if (response.ok) {
         const data = await response.json();
         const noteId = data.id; // Extract the note ID
-        navigate(`/notes/${noteId}?key=${key}`); // Redirect to the note's page
+        // Redirect with note ID and encryption key as URL parameters
+        navigate(`/notes/${noteId}?key=${encryptionKey}`);
       } else {
         alert("Failed to create the note. Please try again.");
       }
