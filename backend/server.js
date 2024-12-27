@@ -110,6 +110,7 @@ app.get("/api/notes/:id", async (req, res) => {
         sender: note.sender,
         receiver: note.receiver,
         message: "This Sweetnote is still hidden! 🤫",
+        iv: note.iv,
         revealDate: note.revealDate,
       });
     }
