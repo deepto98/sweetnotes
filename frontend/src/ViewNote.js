@@ -9,7 +9,8 @@ function ViewNote() {
   const [copyButtonText, setCopyButtonText] = useState("Copy Link");
   const backendUrl = process.env.REACT_APP_BACKEND_API_URL;
 
-  const baseURL = "http://localhost:3000";
+ // Dynamically get the base URL for the React app
+ const baseURL = window.location.origin;
 
   useEffect(() => {
     const fetchNote = async () => {
