@@ -40,7 +40,7 @@ const isValidDate = (dateString) => {
 };
 
 app.post("/api/notes", async (req, res) => {
-  const { sender, receiver, message, revealDate } = req.body;
+  const { sender, receiver, message, iv, revealDate } = req.body;
 
   // Validate required fields aren't empty
   if (!sender || !receiver || !message || !revealDate) {
@@ -48,9 +48,13 @@ app.post("/api/notes", async (req, res) => {
   }
 
   // Validate sender, receiver, and message are strings
-  if (typeof sender !== 'string' || typeof receiver !== 'string' || typeof message !== 'string') {
+  if (
+    typeof sender !== "string" ||
+    typeof receiver !== "string" ||
+    typeof message !== "string"
+  ) {
     return res.status(400).json({
-      error: 'Sender, receiver, and message must be strings.',
+      error: "Sender, receiver, and message must be strings.",
     });
   }
 
