@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-  
+
 function ViewNote() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -9,8 +9,8 @@ function ViewNote() {
   const [copyButtonText, setCopyButtonText] = useState("Copy Link");
   const backendUrl = process.env.REACT_APP_BACKEND_API_URL;
 
- // Dynamically get the base URL for the React app
- const baseURL = window.location.origin;
+  // Dynamically get the base URL for the React app
+  const baseURL = window.location.origin;
 
   useEffect(() => {
     const fetchNote = async () => {
@@ -43,14 +43,18 @@ function ViewNote() {
     if (note) {
       const noteLink = `${baseURL}/notes/${id}`;
       const whatsappMessage = `${note.sender} has a secret note for ${note.receiver}: ${noteLink}`;
-      const whatsappURL = `https://wa.me/?text=${encodeURIComponent(whatsappMessage)}`;
+      const whatsappURL = `https://wa.me/?text=${encodeURIComponent(
+        whatsappMessage
+      )}`;
       window.open(whatsappURL, "_blank");
     }
   };
 
   return (
     <div className="view-note-container">
-      <h1 className="title"  onClick={() => navigate("/")}>Sweetnotes</h1>
+      <h1 className="title" onClick={() => navigate("/")}>
+        Sweetnotes
+      </h1>
       <div className="note-box">
         {error ? (
           <p className="error-message">{error}</p>
@@ -66,7 +70,15 @@ function ViewNote() {
               <strong>Message:</strong> {note.message}
             </p>
             <p>
-              <strong>Reveal Date:</strong> {new Date(note.revealDate).toLocaleString()}
+              <strong>Reveal Date: </strong>
+              {new Intl.DateTimeFormat("en-GB", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: true,
+              }).format(new Date(note.revealDate))}{" "}
             </p>
             <div className="share-buttons">
               <button className="copy-button" onClick={copyToClipboard}>

@@ -9,6 +9,7 @@ function CreateNote() {
   const [receiver, setReceiver] = useState("");
   const [message, setMessage] = useState("");
   const [revealDate, setRevealDate] = useState(new Date()); // Default to current time
+  const [loading, setLoading] = useState(false); // New state for loading
   const navigate = useNavigate();
 
   const backendUrl = process.env.REACT_APP_BACKEND_API_URL;
@@ -16,6 +17,7 @@ function CreateNote() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true); // Start loading
 
     try {
       // Convert to ISO string with timezone included
@@ -42,12 +44,16 @@ function CreateNote() {
     } catch (error) {
       console.error("Error creating note:", error);
       alert("An error occurred. Please try again later.");
+    } finally {
+      setLoading(false); // End loading
     }
   };
 
   return (
     <div className="create-note-container">
-      <h1 className="title" onClick={() => navigate("/")}>Sweetnotes</h1>
+      <h1 className="title" onClick={() => navigate("/")}>
+        Sweetnotes
+      </h1>
       <form className="note-form" onSubmit={handleSubmit}>
         <label className="form-label">Sender</label>
         <input
@@ -77,7 +83,7 @@ function CreateNote() {
 
         <label className="form-label">Reveal Date</label>
         <DatePicker
-        
+
           selected={revealDate}
           onChange={(date) => setRevealDate(date)}
           // showTimeSelect
@@ -85,16 +91,21 @@ function CreateNote() {
 
           timeInputLabel="Time:"
           showTimeInput
-
+          
           dateFormat="dd/MM/yyyy h:mm aa"
           className="form-input"
           onFocus={(e) => e.target.readOnly = true}
-
           required
         />
 
-        <button className="submit-button" type="submit">
-          Create Note
+        <button className="submit-button" type="submit" disabled={loading}>
+          {loading ? (
+            <>
+              <span className="loading-circle"></span> Generating
+            </>
+          ) : (
+            "Create Note"
+          )}
         </button>
       </form>
     </div>
