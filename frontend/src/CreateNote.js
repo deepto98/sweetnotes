@@ -4,6 +4,7 @@ import { formatISO } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import "react-datepicker/dist/react-datepicker.css";
 import logo from "./sweetnotes-logo.png";
+import CryptoJS from "crypto-js";
 
 function CreateNote() {
   const [sender, setSender] = useState("");
@@ -20,6 +21,19 @@ function CreateNote() {
     e.preventDefault();
     setLoading(true); // Start loading
 
+    // Generate a 256-bit encryption key
+    const key = CryptoJS.lib.WordArray.random(32).toString();
+
+    // Encrypt the message
+    const iv = CryptoJS.lib.WordArray.random(16).toString(); //Initialization Vector
+    const encryptedMessage = CryptoJS.AES.encrypt(
+      message,
+      CryptoJS.enc.Hex.parse(key),
+      {
+        iv: CryptoJS.enc.Hex.parse(iv),
+      }
+    ).toString();
+
     try {
       // Convert to ISO string with timezone included
       const revealDateISO = formatISO(revealDate);
@@ -30,7 +44,8 @@ function CreateNote() {
         body: JSON.stringify({
           sender,
           receiver,
-          message,
+          message: encryptedMessage,
+          iv,
           revealDate: revealDateISO,
         }),
       });
@@ -38,7 +53,7 @@ function CreateNote() {
       if (response.ok) {
         const data = await response.json();
         const noteId = data.id; // Extract the note ID
-        navigate(`/notes/${noteId}`); // Redirect to the note's page
+        navigate(`/notes/${noteId}?key=${key}`); // Redirect to the note's page
       } else {
         alert("Failed to create the note. Please try again.");
       }
@@ -52,12 +67,12 @@ function CreateNote() {
 
   return (
     <div className="create-note-container">
-      <div className="title-container"  onClick={() => navigate("/")}>
+      <div className="title-container" onClick={() => navigate("/")}>
         <img src={logo} alt="Sweetnotes Logo" className="logo" />
         <h1 className="title" onClick={() => navigate("/")}>
           Sweetnotes
         </h1>
-      </div>  
+      </div>
       <form className="note-form" onSubmit={handleSubmit}>
         <label className="form-label">Sender</label>
         <input

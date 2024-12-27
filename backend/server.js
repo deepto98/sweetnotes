@@ -64,6 +64,7 @@ app.post("/api/notes", async (req, res) => {
       sender,
       receiver,
       message,
+      iv,
       revealDate: new Date(revealDate), // Ensure it's stored as a Date object
     });
 

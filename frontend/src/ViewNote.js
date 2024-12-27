@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import logo from "./sweetnotes-logo.png";
+import CryptoJS from "crypto-js";
 
 function ViewNote() {
   const { id } = useParams();
@@ -19,7 +20,8 @@ function ViewNote() {
         const response = await fetch(`${backendUrl}/api/notes/${id}`);
         if (response.ok) {
           const data = await response.json();
-          setNote(data);
+          const decryptedNote = decryptNote(data);
+          setNote(decryptedNote);
         } else {
           setError("Failed to fetch the note.");
         }
@@ -30,6 +32,43 @@ function ViewNote() {
 
     fetchNote();
   }, [id, backendUrl]);
+
+  // Function to decrypt the note
+  const decryptNote = ({
+    ciphertext,
+    iv,
+    keyHash,
+    sender,
+    receiver,
+    revealDate,
+  }) => {
+    const storedKey = localStorage.getItem("encryptionKey");
+    if (!storedKey) {
+      throw new Error("Encryption key not found. Cannot decrypt the note.");
+    }
+
+    // Verify the key by comparing hashes
+    const hashedKey = CryptoJS.SHA256(storedKey).toString();
+    if (hashedKey !== keyHash) {
+      throw new Error("The provided key does not match the encrypted data.");
+    }
+
+    // Decrypt the ciphertext
+    const decryptedMessage = CryptoJS.AES.decrypt(
+      ciphertext,
+      CryptoJS.enc.Hex.parse(storedKey),
+      {
+        iv: CryptoJS.enc.Hex.parse(iv),
+      }
+    ).toString(CryptoJS.enc.Utf8);
+
+    return {
+      message: decryptedMessage,
+      sender,
+      receiver,
+      revealDate,
+    };
+  };
 
   const copyToClipboard = () => {
     const noteLink = `${baseURL}/notes/${id}`;
@@ -53,12 +92,10 @@ function ViewNote() {
 
   return (
     <div className="view-note-container">
-      <div className="title-container"  onClick={() => navigate("/")}>
+      <div className="title-container" onClick={() => navigate("/")}>
         <img src={logo} alt="Sweetnotes Logo" className="logo" />
-        <h1 className="title">
-          Sweetnotes
-        </h1>
-      </div>  
+        <h1 className="title">Sweetnotes</h1>
+      </div>
       <div className="note-box">
         {error ? (
           <p className="error-message">{error}</p>
