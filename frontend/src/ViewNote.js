@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import logo from "./sweetnotes-logo.png";
 
 function ViewNote() {
   const { id } = useParams();
@@ -42,7 +43,7 @@ function ViewNote() {
   const shareOnWhatsApp = () => {
     if (note) {
       const noteLink = `${baseURL}/notes/${id}`;
-      const whatsappMessage = `${note.sender} has a secret note for ${note.receiver}: ${noteLink}`;
+      const whatsappMessage = `🤫 ${note.sender} has a secret Sweetnote for ${note.receiver} 🤫\n ${noteLink}`;
       const whatsappURL = `https://wa.me/?text=${encodeURIComponent(
         whatsappMessage
       )}`;
@@ -52,9 +53,12 @@ function ViewNote() {
 
   return (
     <div className="view-note-container">
-      <h1 className="title" onClick={() => navigate("/")}>
-        Sweetnotes
-      </h1>
+      <div className="title-container"  onClick={() => navigate("/")}>
+        <img src={logo} alt="Sweetnotes Logo" className="logo" />
+        <h1 className="title">
+          Sweetnotes
+        </h1>
+      </div>  
       <div className="note-box">
         {error ? (
           <p className="error-message">{error}</p>

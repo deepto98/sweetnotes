@@ -3,6 +3,7 @@ import DatePicker from "react-datepicker";
 import { formatISO } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import "react-datepicker/dist/react-datepicker.css";
+import logo from "./sweetnotes-logo.png";
 
 function CreateNote() {
   const [sender, setSender] = useState("");
@@ -51,9 +52,12 @@ function CreateNote() {
 
   return (
     <div className="create-note-container">
-      <h1 className="title" onClick={() => navigate("/")}>
-        Sweetnotes
-      </h1>
+      <div className="title-container"  onClick={() => navigate("/")}>
+        <img src={logo} alt="Sweetnotes Logo" className="logo" />
+        <h1 className="title" onClick={() => navigate("/")}>
+          Sweetnotes
+        </h1>
+      </div>  
       <form className="note-form" onSubmit={handleSubmit}>
         <label className="form-label">Sender</label>
         <input
@@ -83,7 +87,6 @@ function CreateNote() {
 
         <label className="form-label">Reveal Date</label>
         <DatePicker
-
           selected={revealDate}
           onChange={(date) => setRevealDate(date)}
           // showTimeSelect
@@ -91,10 +94,9 @@ function CreateNote() {
 
           timeInputLabel="Time:"
           showTimeInput
-          
           dateFormat="dd/MM/yyyy h:mm aa"
           className="form-input"
-          onFocus={(e) => e.target.readOnly = true}
+          onFocus={(e) => (e.target.readOnly = true)}
           required
         />
 

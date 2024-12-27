@@ -1,6 +1,6 @@
 /* Global Styles */
 body {
-  font-family: 'Roboto', Arial, sans-serif;
+  font-family: "Roboto", Arial, sans-serif;
   background: #ffecd2;
   margin: 0;
   padding: 0;
@@ -19,6 +19,14 @@ a {
   color: inherit;
 }
 
+.title-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px; /* Add spacing between logo and text */
+  margin-bottom: 20px;
+}
+
 /* General Container Styles */
 .create-note-container,
 .view-note-container {
@@ -28,14 +36,21 @@ a {
   padding: 50px 20px;
 }
 
+.logo {
+  width: 50px; /* Adjust width for smaller display */
+  height: auto; /* Maintain aspect ratio */
+  cursor: pointer;
+  border-radius: 5px;
+}
+
 .title {
   font-size: 3em;
   color: #ff6f61;
   font-weight: 700;
   text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
-  margin-bottom: 30px;
   text-align: center;
-  cursor: pointer; /* Change cursor to pointer */
+  margin-bottom: 5px;
+  cursor: pointer;
 }
 
 .title:hover {
@@ -175,7 +190,7 @@ a {
 }
 
 .react-datepicker-wrapper {
-    display: block !important; 
+  display: block !important;
 }
 
 /* Mobile Styles */
