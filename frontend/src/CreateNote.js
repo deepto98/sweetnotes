@@ -1,24 +1,35 @@
 import React, { useState } from "react";
+import DatePicker from "react-datepicker";
+import { formatISO } from "date-fns";
 import { useNavigate } from "react-router-dom";
+import "react-datepicker/dist/react-datepicker.css";
 
 function CreateNote() {
   const [sender, setSender] = useState("");
   const [receiver, setReceiver] = useState("");
   const [message, setMessage] = useState("");
-  const [revealDate, setRevealDate] = useState("");
+  const [revealDate, setRevealDate] = useState(new Date()); // Default to current time
   const navigate = useNavigate();
- 
+
   const backendUrl = process.env.REACT_APP_BACKEND_API_URL;
-   console.log(backendUrl);
+  console.log(backendUrl);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
+      // Convert to ISO string with timezone included
+      const revealDateISO = formatISO(revealDate);
+
       const response = await fetch(`${backendUrl}/api/notes`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sender, receiver, message, revealDate }),
+        body: JSON.stringify({
+          sender,
+          receiver,
+          message,
+          revealDate: revealDateISO,
+        }),
       });
 
       if (response.ok) {
@@ -36,7 +47,7 @@ function CreateNote() {
 
   return (
     <div className="create-note-container">
-      <h1 className="title"  onClick={() => navigate("/")}>Sweetnotes</h1>
+      <h1 className="title" onClick={() => navigate("/")}>Sweetnotes</h1>
       <form className="note-form" onSubmit={handleSubmit}>
         <label className="form-label">Sender</label>
         <input
@@ -65,11 +76,20 @@ function CreateNote() {
         ></textarea>
 
         <label className="form-label">Reveal Date</label>
-        <input
-          type="datetime-local"
+        <DatePicker
+        
+          selected={revealDate}
+          onChange={(date) => setRevealDate(date)}
+          // showTimeSelect
+          // timeIntervals={1}
+
+          timeInputLabel="Time:"
+          showTimeInput
+
+          dateFormat="dd/MM/yyyy h:mm aa"
           className="form-input"
-          value={revealDate}
-          onChange={(e) => setRevealDate(e.target.value)}
+          onFocus={(e) => e.target.readOnly = true}
+
           required
         />
 
