@@ -45,7 +45,7 @@ app.post("/api/notes", async (req, res) => {
   const { sender, receiver, message, iv, revealDate } = req.body;
 
   // Validate required fields aren't empty
-  if (!sender || !receiver || !message || !revealDate || !iv) {
+  if (!sender || !receiver || !message || !revealDate) {
     return res.status(400).json({ error: "All fields are required." });
   }
 
@@ -53,8 +53,8 @@ app.post("/api/notes", async (req, res) => {
   if (
     typeof sender !== "string" ||
     typeof receiver !== "string" ||
-    typeof message !== "string" ||
-    typeof iv !== "string"
+    typeof message !== "string"
+    // || typeof iv !== "string"
   ) {
     return res.status(400).json({
       error: "Sender, receiver, and message must be strings.",
@@ -106,15 +106,19 @@ app.get("/api/notes/:id", async (req, res) => {
 
     // Check if the reveal date has passed
     const currentDate = new Date();
-    const timeToDecrypt = currentDate >= new Date(note.revealDate);
+    const timeToDecrypt =
+      currentDate >= new Date(note.revealDate) ? true : false;
 
     // if (currentDate < new Date(note.revealDate)) {
     return res.json({
       sender: note.sender,
       receiver: note.receiver,
-      message: timeToDecrypt ? note.encryptedMessage : "This Sweetnote is still hidden! 🤫",
+      message: timeToDecrypt
+        ? note.message
+        : "This Sweetnote is still hidden! 🤫",
       iv: note.iv,
       revealDate: note.revealDate,
+      timeToDecrypt: timeToDecrypt,
     });
     // }
 

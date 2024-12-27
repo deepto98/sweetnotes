@@ -53,10 +53,10 @@ function ViewNote() {
         } else {
           // Set note as is if timeToDecrypt is false
           setNote({
-            sender: note.sender,
-            receiver: note.receiver,
-            message: note.message, // This Sweetnote is still hidden! 🤫
-            revealDate: note.revealDate,
+            sender: data.sender,
+            receiver: data.receiver,
+            message: data.message, // This Sweetnote is still hidden! 🤫
+            revealDate: data.revealDate,
           });
           // setError("Failed to fetch the note.");
         }
