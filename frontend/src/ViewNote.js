@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-// import "./ViewNote.css";
-
+  
 function ViewNote() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [note, setNote] = useState(null);
   const [error, setError] = useState("");
   const [copyButtonText, setCopyButtonText] = useState("Copy Link");
+  const backendUrl = process.env.REACT_APP_BACKEND_API_URL;
 
   const baseURL = "http://localhost:3000";
 
   useEffect(() => {
     const fetchNote = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/notes/${id}`);
+        const response = await fetch(`${backendUrl}/api/notes/${id}`);
         if (response.ok) {
           const data = await response.json();
           setNote(data);
@@ -27,7 +27,7 @@ function ViewNote() {
     };
 
     fetchNote();
-  }, [id]);
+  }, [id, backendUrl]);
 
   const copyToClipboard = () => {
     const noteLink = `${baseURL}/notes/${id}`;
@@ -41,7 +41,7 @@ function ViewNote() {
   const shareOnWhatsApp = () => {
     if (note) {
       const noteLink = `${baseURL}/notes/${id}`;
-      const whatsappMessage = `${note.sender} has a secretnote for ${note.receiver}: ${noteLink}`;
+      const whatsappMessage = `${note.sender} has a secret note for ${note.receiver}: ${noteLink}`;
       const whatsappURL = `https://wa.me/?text=${encodeURIComponent(whatsappMessage)}`;
       window.open(whatsappURL, "_blank");
     }

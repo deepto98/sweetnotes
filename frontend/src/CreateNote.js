@@ -7,12 +7,15 @@ function CreateNote() {
   const [message, setMessage] = useState("");
   const [revealDate, setRevealDate] = useState("");
   const navigate = useNavigate();
+ 
+  const backendUrl = process.env.REACT_APP_BACKEND_API_URL;
+   console.log(backendUrl);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:5000/api/notes", {
+      const response = await fetch(`${backendUrl}/api/notes`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ sender, receiver, message, revealDate }),
