@@ -24,6 +24,7 @@ const noteSchema = new mongoose.Schema({
   sender: String,
   receiver: String,
   message: String,
+  iv: String,
   revealDate: Date,
 });
 
@@ -43,7 +44,7 @@ app.post("/api/notes", async (req, res) => {
   const { sender, receiver, message, iv, revealDate } = req.body;
 
   // Validate required fields aren't empty
-  if (!sender || !receiver || !message || !revealDate) {
+  if (!sender || !receiver || !message || !revealDate || !iv) {
     return res.status(400).json({ error: "All fields are required." });
   }
 
@@ -51,7 +52,8 @@ app.post("/api/notes", async (req, res) => {
   if (
     typeof sender !== "string" ||
     typeof receiver !== "string" ||
-    typeof message !== "string"
+    typeof message !== "string" ||
+    typeof iv !== "string"
   ) {
     return res.status(400).json({
       error: "Sender, receiver, and message must be strings.",
