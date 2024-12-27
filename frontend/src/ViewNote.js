@@ -26,9 +26,8 @@ function ViewNote() {
 
       try {
         const response = await fetch(`${backendUrl}/api/notes/${id}`);
-        if (response.ok) {
-          const data = await response.json();
-
+        const data = await response.json();
+        if (data.timeToDecrypt) {
           // Decrypt the message
           const decryptedMessage = CryptoJS.AES.decrypt(
             data.message,
@@ -52,7 +51,14 @@ function ViewNote() {
             }),
           });
         } else {
-          setError("Failed to fetch the note.");
+          // Set note as is if timeToDecrypt is false
+          setNote({
+            sender: note.sender,
+            receiver: note.receiver,
+            message: note.message, // This Sweetnote is still hidden! 🤫
+            revealDate: note.revealDate,
+          });
+          // setError("Failed to fetch the note.");
         }
       } catch (error) {
         console.error("Error fetching or decrypting the note:", error);

@@ -26,6 +26,7 @@ const noteSchema = new mongoose.Schema({
   message: String,
   iv: String,
   revealDate: Date,
+  timeToDecrypt: { type: Boolean, default: false }, // New field
 });
 
 const Note = mongoose.model("Note", noteSchema);
@@ -105,18 +106,20 @@ app.get("/api/notes/:id", async (req, res) => {
 
     // Check if the reveal date has passed
     const currentDate = new Date();
-    if (currentDate < new Date(note.revealDate)) {
-      return res.json({
-        sender: note.sender,
-        receiver: note.receiver,
-        message: "This Sweetnote is still hidden! 🤫",
-        iv: note.iv,
-        revealDate: note.revealDate,
-      });
-    }
+    const timeToDecrypt = currentDate >= new Date(note.revealDate);
+
+    // if (currentDate < new Date(note.revealDate)) {
+    return res.json({
+      sender: note.sender,
+      receiver: note.receiver,
+      message: timeToDecrypt ? note.encryptedMessage : "This Sweetnote is still hidden! 🤫",
+      iv: note.iv,
+      revealDate: note.revealDate,
+    });
+    // }
 
     // If the reveal date has passed, return the full note
-    res.json(note);
+    // res.json(note);
   } catch (err) {
     console.error("Error fetching note:", err);
     res.status(500).json({ error: "Internal server error." });
