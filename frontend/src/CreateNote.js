@@ -3,8 +3,7 @@ import DatePicker from "react-datepicker";
 import { formatISO } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import "react-datepicker/dist/react-datepicker.css";
-import logo from "./sweetnotes-logo.png";
-import CryptoJS from "crypto-js";
+ import CryptoJS from "crypto-js";
 
 function CreateNote() {
   const [sender, setSender] = useState("");
@@ -65,7 +64,11 @@ function CreateNote() {
   return (
     <div className="create-note-container">
       <div className="title-container" onClick={() => navigate("/")}>
-        <img src={logo} alt="Sweetnotes Logo" className="logo" />
+        <img
+          src="/sweetnotes-logo.png"
+          alt="Sweetnotes Logo"
+          className="logo"
+        />
         <h1 className="title" onClick={() => navigate("/")}>
           Sweetnotes
         </h1>

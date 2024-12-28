@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useSearchParams, useNavigate } from "react-router-dom";
-import logo from "./sweetnotes-logo.png";
 import CryptoJS from "crypto-js";
 
 function ViewNote() {
@@ -123,7 +122,11 @@ function ViewNote() {
   return (
     <div className="view-note-container">
       <div className="title-container" onClick={() => navigate("/")}>
-        <img src={logo} alt="Sweetnotes Logo" className="logo" />
+        <img
+          src="/sweetnotes-logo.png"
+          alt="Sweetnotes Logo"
+          className="logo"
+        />
         <h1 className="title">Sweetnotes</h1>
       </div>
       <div className="note-box">
