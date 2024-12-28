@@ -71,7 +71,9 @@ function ViewNote() {
   }, [id, searchParams, backendUrl]);
 
   const copyToClipboard = () => {
-    const noteLink = `${baseURL}/notes/${id}`;
+    const encryptionKey = searchParams.get("key");
+
+    const noteLink = `${baseURL}/notes/${id}?key=${encryptionKey}`;
     navigator.clipboard
       .writeText(noteLink)
       .then(() => setCopyButtonText("Copied!"))
@@ -80,8 +82,10 @@ function ViewNote() {
   };
 
   const shareOnWhatsApp = () => {
+    const encryptionKey = searchParams.get("key");
+
     if (note) {
-      const noteLink = `${baseURL}/notes/${id}`;
+      const noteLink = `${baseURL}/notes/${id}?key=${encryptionKey}`;
       const whatsappMessage = `🤫 ${note.sender} has a secret Sweetnote for ${note.receiver} 🤫\n ${noteLink}`;
       const whatsappURL = `https://wa.me/?text=${encodeURIComponent(
         whatsappMessage
