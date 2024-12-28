@@ -112,7 +112,7 @@ function ViewNote() {
 
     if (note) {
       const noteLink = `${baseURL}/notes/${id}?key=${encryptionKey}`;
-      const whatsappMessage = `🤫 ${note.sender} has a secret Sweetnote for ${note.receiver} 🤫\n ${noteLink}`;
+      const whatsappMessage = `🎁✨ *Psst! A Sweetnote from ${note.sender} awaits you, ${note.receiver}!* ✨🎁\n 🕰️ Unwrap the secret here: 👇\n ${noteLink}`;
       const whatsappURL = `https://wa.me/?text=${encodeURIComponent(
         whatsappMessage
       )}`;
