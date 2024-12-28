@@ -74,10 +74,36 @@ function ViewNote() {
     const encryptionKey = searchParams.get("key");
 
     const noteLink = `${baseURL}/notes/${id}?key=${encryptionKey}`;
-    navigator.clipboard
-      .writeText(noteLink)
-      .then(() => setCopyButtonText("Copied!"))
-      .catch(() => setCopyButtonText("Failed to Copy"));
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard
+        .writeText(noteLink)
+        .then(() => setCopyButtonText("Copied!"))
+        .catch(() => setCopyButtonText("Failed to Copy"));
+    } else {
+      // setCopyButtonText("Failed to Copy");
+
+      // Use the 'out of viewport hidden text area' trick
+      const textArea = document.createElement("textarea");
+      textArea.value = noteLink;
+
+      // Move textarea out of the viewport so it's not visible
+      textArea.style.position = "absolute";
+      textArea.style.left = "-999999px";
+
+      document.body.prepend(textArea);
+      textArea.select();
+
+      try {
+        document.execCommand("copy");
+        setCopyButtonText("Copied!");
+        // .catch(() => setCopyButtonText("Failed to Copy"));
+      } catch (error) {
+        console.error(error);
+      } finally {
+        textArea.remove();
+      }
+    }
     setTimeout(() => setCopyButtonText("Copy Link"), 2000); // Reset after 2 seconds
   };
 
