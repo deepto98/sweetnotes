@@ -3,7 +3,7 @@ import DatePicker from "react-datepicker";
 import { formatISO } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import "react-datepicker/dist/react-datepicker.css";
- import CryptoJS from "crypto-js";
+import CryptoJS from "crypto-js";
 
 function CreateNote() {
   const [sender, setSender] = useState("");

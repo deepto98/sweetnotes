@@ -193,6 +193,38 @@ a {
   display: block !important;
 }
 
+/*Footer*/
+.footer {
+  padding: 20px;
+  text-align: center;
+  border-top: 1px solid #ddd;
+}
+
+.links-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}
+
+.link {
+  text-decoration: none;
+}
+
+.icon {
+  height: 30px;
+}
+
+.created-by {
+  font-size: 1em;
+  color: #333;
+}
+
+.profile-link {
+  color: #ff6f61;
+  text-decoration: none;
+}
+
 /* Mobile Styles */
 @media (max-width: 768px) {
   .title {
