@@ -74,20 +74,22 @@ function CreateNote() {
         </h1>
       </div>
       <form className="note-form" onSubmit={handleSubmit}>
-        <label className="form-label">Sender</label>
+        <label className="form-label">From</label>
         <input
           type="text"
           className="form-input"
           value={sender}
+          placeholder="Enter your name"
           onChange={(e) => setSender(e.target.value)}
           required
         />
 
-        <label className="form-label">Receiver</label>
+        <label className="form-label">To</label>
         <input
           type="text"
           className="form-input"
           value={receiver}
+          placeholder="Name of your loved one"
           onChange={(e) => setReceiver(e.target.value)}
           required
         />
