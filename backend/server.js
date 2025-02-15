@@ -2,6 +2,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const webpush = require("web-push");
+
 require("dotenv").config();
 
 const app = express();
@@ -9,6 +11,13 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
+
+// VAPID config for Web Push notifications
+webpush.setVapidDetails(
+  `mailto:${process.env.VAPID_EMAIL}`,
+  process.env.VAPID_PUBLIC_KEY,
+  process.env.VAPID_PRIVATE_KEY
+);
 
 // MongoDB Connection
 mongoose
@@ -26,10 +35,20 @@ const noteSchema = new mongoose.Schema({
   message: String,
   iv: String,
   revealDate: Date,
-  timeToDecrypt: { type: Boolean, default: false }, // New field
 });
 
 const Note = mongoose.model("Note", noteSchema);
+
+// Subscriptions Schema and Model 
+const SubscriptionSchema = new mongoose.Schema({
+  userId: { type: String, required: true },
+  noteId: { type: String, required: true },
+  revealDate: { type: Date, required: true },
+  subscription: { type: Object, required: true },
+  notified: { type: Boolean, default: false },
+});
+
+const Subscription = mongoose.model("Subscription", SubscriptionSchema);
 
 // Routes
 
@@ -129,6 +148,62 @@ app.get("/api/notes/:id", async (req, res) => {
     res.status(500).json({ error: "Internal server error." });
   }
 });
+ 
+// 3 . Endpoint for Web Push Subscription
+app.post("/subscribe", async (req, res) => {
+  const { subscription, userId, noteId, revealDate } = req.body;
+  try {
+    await Subscription.findOneAndUpdate(
+      { userId, noteId },
+      { subscription, revealDate, notified: false },
+      { upsert: true, new: true }
+    );
+    res.status(201).json({ message: "Subscription saved!" });
+  } catch (error) {
+    console.error("Error saving subscription:", error);
+    res.status(500).json({ error: "Failed to save subscription" });
+  }
+});
+ 
+// Check for notes that need to be revealed
+// Set up an interval to check for notes to reveal every minute (60000ms)
+// Scheduled task to send notifications when reveal time has passed
+setInterval(async () => {
+  const now = new Date();
+  try {
+ 
+    // Find subscriptions with revealDate passed which are not yet notified
+    const subscriptionsToNotify = await Subscription.find({
+      revealDate: { $lte: now },
+      notified: false,
+    });
+
+    for (const sub of subscriptionsToNotify) {
+      // Get the note details
+      const note = await Note.findById(sub.noteId);
+      console.log(note.revealDate);
+      if (!note) continue;
+      const payload = JSON.stringify({
+        title: "Sweetnotes Reveal!",
+
+        body: `🎁✨ *Psst! A Sweetnote from ${note.sender} awaits you, ${note.receiver}!* ✨🎁 `,
+      });
+      try {
+        await webpush.sendNotification(sub.subscription, payload);
+        sub.notified = true;
+        await sub.save();
+        console.log(`Notification sent for subscription ${sub._id}`);
+      } catch (err) {
+        console.error(
+          `Error sending notification for subscription ${sub._id}:`,
+          err
+        );
+      }
+    }
+  } catch (error) {
+    console.error("Error in notification scheduler:", error);
+  }
+}, 30000); // Check every 30s
 
 // Start Server
 const PORT = process.env.PORT || 5000;

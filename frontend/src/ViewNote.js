@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 import CryptoJS from "crypto-js";
+import { v4 as uuidv4 } from "uuid";
 
 function ViewNote() {
   const [searchParams] = useSearchParams();
@@ -68,6 +69,68 @@ function ViewNote() {
 
     fetchNote();
   }, [id, searchParams, backendUrl]);
+  // Once the note is loaded, register service worker and subscribe for push notifications.
+  useEffect(() => {
+    if (note) {
+      if ("serviceWorker" in navigator && "PushManager" in window) {
+        navigator.serviceWorker
+          .register("/sw.js")
+          .then((registration) => {
+            return registration.pushManager
+              .getSubscription()
+              .then((subscription) => {
+                if (subscription) return subscription;
+                const vapidPublicKey = process.env.REACT_APP_VAPID_PUBLIC_KEY;
+                const convertedKey = urlBase64ToUint8Array(vapidPublicKey);
+                return registration.pushManager.subscribe({
+                  userVisibleOnly: true,
+                  applicationServerKey: convertedKey,
+                });
+              });
+          })
+          .then((subscription) => {
+            // Generate a random user id if not already stored
+            let userId = localStorage.getItem("userId");
+            if (!userId) {
+              userId = uuidv4();
+              localStorage.setItem("userId", userId);
+            }
+
+            // Send the subscription details to the backend along with noteId and revealDate
+            fetch(`${backendUrl}/subscribe`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                subscription,
+                userId,
+                noteId: id,
+                revealDate: note.revealDate,
+              }),
+            })
+              .then((res) => res.json())
+              .then((data) => console.log("Subscription saved:", data))
+              .catch((err) => console.error("Error saving subscription:", err));
+          })
+          .catch((err) =>
+            console.error("Service Worker registration failed:", err)
+          );
+      }
+    }
+  }, [note, backendUrl, id]);
+
+  // Utility function to convert a base64 public key to a Uint8Array
+  function urlBase64ToUint8Array(base64String) {
+    const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
+    const base64 = (base64String + padding)
+      .replace(/-/g, "+")
+      .replace(/_/g, "/");
+    const rawData = window.atob(base64);
+    const outputArray = new Uint8Array(rawData.length);
+    for (let i = 0; i < rawData.length; ++i) {
+      outputArray[i] = rawData.charCodeAt(i);
+    }
+    return outputArray;
+  }
 
   const copyToClipboard = () => {
     const encryptionKey = searchParams.get("key");

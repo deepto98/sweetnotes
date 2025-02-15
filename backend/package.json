@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "nodemon server.js", 
-    "build": "npm install && npm prune", 
-    "prod": "npm run build && npm start", 
+    "dev": "nodemon server.js",
+    "build": "npm install && npm prune",
+    "prod": "npm run build && npm start",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -18,7 +18,8 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
-    "mongoose": "^8.9.2"
+    "mongoose": "^8.9.2",
+    "web-push": "^3.6.7"
   },
   "devDependencies": {
     "nodemon": "^3.1.9"

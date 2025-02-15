@@ -14,8 +14,6 @@ function CreateNote() {
   const navigate = useNavigate();
 
   const backendUrl = process.env.REACT_APP_BACKEND_API_URL;
-  console.log(backendUrl);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true); // Start loading
