@@ -185,7 +185,8 @@ setInterval(async () => {
       if (!note) continue;
       const payload = JSON.stringify({
         title: "Sweetnotes Reveal!",
-        body: `Your Sweetnote from ${note.sender} for ${note.receiver} is now available!`,
+
+        body: `🎁✨ *Psst! A Sweetnote from ${note.sender} awaits you, ${note.receiver}!* ✨🎁 `,
       });
       try {
         await webpush.sendNotification(sub.subscription, payload);
