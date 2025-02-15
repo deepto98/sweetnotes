@@ -9,7 +9,11 @@ function CreateNote() {
   const [sender, setSender] = useState("");
   const [receiver, setReceiver] = useState("");
   const [message, setMessage] = useState("");
-  const [revealDate, setRevealDate] = useState(new Date()); // Default to current time
+  const [revealDate, setRevealDate] = useState(() => {
+    const now = new Date();
+    now.setSeconds(0);
+    return now;
+  }); // Default to current time with 0 seconds
   const [loading, setLoading] = useState(false); // New state for loading
   const navigate = useNavigate();
 
@@ -105,7 +109,11 @@ function CreateNote() {
         <label className="form-label">Reveal Date</label>
         <DatePicker
           selected={revealDate}
-          onChange={(date) => setRevealDate(date)}
+          onChange={(date) => {
+            const adjustedDate = new Date(date);
+            adjustedDate.setSeconds(0);
+            setRevealDate(adjustedDate);
+          }}
           // showTimeSelect
           // timeIntervals={1}
 
