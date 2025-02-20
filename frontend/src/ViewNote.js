@@ -17,6 +17,27 @@ function ViewNote() {
   const baseURL = window.location.origin;
 
   useEffect(() => {
+    // Search for key in params, if present, store in localstorage, to be used for notification clicks
+    const encryptionKey = searchParams.get("key");
+
+    if (encryptionKey) {
+      // Store the key securely in local storage (you could encrypt this if needed)
+      localStorage.setItem(`note-key-${id}`, encryptionKey);
+    } else {
+      // No key in URL? Check local storage [Case for notification click]
+      const storedKey = localStorage.getItem(`note-key-${id}`);
+      if (storedKey) {
+        // Redirect to the full URL with key
+        navigate(`/notes/${id}?key=${storedKey}`, { replace: true });
+      } else {
+        // Key missing, show error
+        alert(
+          "Missing key! Please visit the original link shared by the sender."
+        );
+      }
+    }
+
+    // Load note using key from url paramete
     const fetchNote = async () => {
       const encryptionKey = searchParams.get("key");
       if (!encryptionKey) {
@@ -68,7 +89,7 @@ function ViewNote() {
     };
 
     fetchNote();
-  }, [id, searchParams, backendUrl]);
+  }, [id, searchParams, backendUrl, navigate]);
   // Once the note is loaded, register service worker and subscribe for push notifications.
   useEffect(() => {
     if (note) {
