@@ -8,6 +8,7 @@ self.addEventListener("push", function (event) {
 
   event.waitUntil(self.registration.showNotification(title, options));
 });
+
 // Handle notification click
 self.addEventListener("notificationclick", function (event) {
   console.log("[Service Worker] Notification click received");
@@ -18,7 +19,7 @@ self.addEventListener("notificationclick", function (event) {
       .then((clientList) => {
         // If a window/tab is already open, focus it.
         for (const client of clientList) {
-          if (client.url === event.notification.url && "focus" in client) {
+          if (client.url === event.notification.data.url && "focus" in client) {
             return client.focus();
           }
         }
