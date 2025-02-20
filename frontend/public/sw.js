@@ -4,6 +4,9 @@ self.addEventListener("push", function (event) {
   const options = {
     body: data.body || "You have a new Sweetnote waiting to be revealed!",
     icon: "/favicon.ico",
+    data: {
+      url: data.data && data.data.url ? data.data.url : "/",
+    },
   };
 
   event.waitUntil(self.registration.showNotification(title, options));
@@ -12,7 +15,7 @@ self.addEventListener("push", function (event) {
 // Handle notification click
 self.addEventListener("notificationclick", function (event) {
   console.log("[Service Worker] Notification click received");
-  event.notification.close();
+  // event.notification.close();
   event.waitUntil(
     clients.openWindow(event.notification.data.url)
 
