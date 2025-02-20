@@ -29,6 +29,8 @@ function ViewNote() {
       if (storedKey) {
         // Redirect to the full URL with key
         navigate(`/notes/${id}?key=${storedKey}`, { replace: true });
+        window.location.reload(); // Force a reload so the component re-initializes with the key
+
       } else {
         // Key missing, show error
         alert(
@@ -37,7 +39,7 @@ function ViewNote() {
       }
     }
 
-    // Load note using key from url paramete
+    // Load note using key from url parameter
     const fetchNote = async () => {
       const encryptionKey = searchParams.get("key");
       if (!encryptionKey) {
