@@ -14,19 +14,21 @@ self.addEventListener("notificationclick", function (event) {
   console.log("[Service Worker] Notification click received");
   event.notification.close();
   event.waitUntil(
-    clients
-      .matchAll({ type: "window", includeUncontrolled: true })
-      .then((clientList) => {
-        // If a window/tab is already open, focus it.
-        for (const client of clientList) {
-          if (client.url === event.notification.data.url && "focus" in client) {
-            return client.focus();
-          }
-        }
-        // Otherwise, open a new window/tab.
-        if (clients.openWindow) {
-          return clients.openWindow(event.notification.data.url);
-        }
-      })
+    clients.openWindow(event.notification.data.url)
+
+    // clients
+    //   .matchAll({ type: "window", includeUncontrolled: true })
+    //   .then((clientList) => {
+    //     // If a window/tab is already open, focus it.
+    //     for (const client of clientList) {
+    //       if (client.url === event.notification.data.url && "focus" in client) {
+    //         return client.focus();
+    //       }
+    //     }
+    //     // Otherwise, open a new window/tab.
+    //     if (clients.openWindow) {
+    //       return clients.openWindow(event.notification.data.url);
+    //     }
+    //   })
   );
 });
