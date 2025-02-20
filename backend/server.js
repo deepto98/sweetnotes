@@ -39,7 +39,7 @@ const noteSchema = new mongoose.Schema({
 
 const Note = mongoose.model("Note", noteSchema);
 
-// Subscriptions Schema and Model 
+// Subscriptions Schema and Model
 const SubscriptionSchema = new mongoose.Schema({
   userId: { type: String, required: true },
   noteId: { type: String, required: true },
@@ -148,7 +148,7 @@ app.get("/api/notes/:id", async (req, res) => {
     res.status(500).json({ error: "Internal server error." });
   }
 });
- 
+
 // 3 . Endpoint for Web Push Subscription
 app.post("/subscribe", async (req, res) => {
   const { subscription, userId, noteId, revealDate } = req.body;
@@ -164,14 +164,13 @@ app.post("/subscribe", async (req, res) => {
     res.status(500).json({ error: "Failed to save subscription" });
   }
 });
- 
+
 // Check for notes that need to be revealed
 // Set up an interval to check for notes to reveal every minute (60000ms)
 // Scheduled task to send notifications when reveal time has passed
 setInterval(async () => {
   const now = new Date();
   try {
- 
     // Find subscriptions with revealDate passed which are not yet notified
     const subscriptionsToNotify = await Subscription.find({
       revealDate: { $lte: now },
@@ -181,12 +180,13 @@ setInterval(async () => {
     for (const sub of subscriptionsToNotify) {
       // Get the note details
       const note = await Note.findById(sub.noteId);
-      console.log(note.revealDate);
-      if (!note) continue;
-      const payload = JSON.stringify({
-        title: "Sweetnotes Reveal!",
 
-        body: `🎁✨ *Psst! A Sweetnote from ${note.sender} awaits you, ${note.receiver}!* ✨🎁 `,
+      if (!note) continue;
+
+      const payload = JSON.stringify({
+        title: "🎁✨ Sweetnotes Reveal! 🎁✨",
+        body: `*Psst! Sweetnote from ${note.sender} for ${note.receiver} is ready to be read!* `,
+        url: `/notes/${sub.noteId}`,
       });
       try {
         await webpush.sendNotification(sub.subscription, payload);

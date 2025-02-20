@@ -77,7 +77,7 @@ function CreateNote() {
           type="text"
           className="form-input"
           value={sender}
-          placeholder="Enter your name"
+          placeholder="Your name"
           onChange={(e) => setSender(e.target.value)}
           required
         />
@@ -87,7 +87,7 @@ function CreateNote() {
           type="text"
           className="form-input"
           value={receiver}
-          placeholder="Name of your loved one"
+          placeholder="Your friend's name"
           onChange={(e) => setReceiver(e.target.value)}
           required
         />
