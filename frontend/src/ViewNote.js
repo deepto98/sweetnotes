@@ -210,10 +210,6 @@ function ViewNote() {
     }
   };
 
-  if (!encryptionKey || !note) {
-    return <div>Loading note...</div>;
-  }
-
   return (
     <div className="view-note-container">
       <div className="title-container" onClick={() => navigate("/")}>
