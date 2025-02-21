@@ -4,94 +4,99 @@ import CryptoJS from "crypto-js";
 import { v4 as uuidv4 } from "uuid";
 
 function ViewNote() {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { id } = useParams();
   const [note, setNote] = useState(null);
   const [error, setError] = useState("");
   const [copyButtonText, setCopyButtonText] = useState("Copy Link");
   const navigate = useNavigate();
+  const [encryptionKey, setEncryptionKey] = useState(null);
 
   const backendUrl = process.env.REACT_APP_BACKEND_API_URL;
 
   // Dynamically get the base URL for the React app
   const baseURL = window.location.origin;
 
+  // Step 1: On mount, check for encryption key in URL, otherwise try localStorage
   useEffect(() => {
     // Search for key in params, if present, store in localstorage, to be used for notification clicks
-    const encryptionKey = searchParams.get("key");
+    const keyFromUrl = searchParams.get("key");
 
-    if (encryptionKey) {
-      // Store the key securely in local storage (you could encrypt this if needed)
-      localStorage.setItem(`note-key-${id}`, encryptionKey);
+    if (keyFromUrl) {
+      setEncryptionKey(keyFromUrl);
+
+      // Store key for future visits
+      localStorage.setItem(`note-key-${id}`, keyFromUrl);
     } else {
       // No key in URL? Check local storage [Case for notification click]
       const storedKey = localStorage.getItem(`note-key-${id}`);
       if (storedKey) {
-        // Redirect to the full URL with key
-        navigate(`/notes/${id}?key=${storedKey}`, { replace: true });
-        window.location.reload(); // Force a reload so the component re-initializes with the key
-
+        setEncryptionKey(storedKey);
+        // Update URL with key without reloading the page
+        setSearchParams({ key: storedKey });
       } else {
         // Key missing, show error
-        alert(
-          "Missing key! Please visit the original link shared by the sender."
+        setError(
+          "Missing encryption key! Please use the original link provided by the sender."
         );
       }
     }
+  }, [id, searchParams, setSearchParams]);
 
-    // Load note using key from url parameter
-    const fetchNote = async () => {
-      const encryptionKey = searchParams.get("key");
-      if (!encryptionKey) {
-        setError("Encryption key missing from URL.");
-        return;
-      }
+  // Step 2: Once encryptionKey is available, fetch the note
+  useEffect(() => {
+    if (encryptionKey) {
+      const fetchNote = async () => {
+        try {
+          const response = await fetch(`${backendUrl}/api/notes/${id}`);
+          if (!response.ok) throw new Error("Failed to fetch note");
+          const data = await response.json();
+          // Here you would decrypt the note using encryptionKey and data.iv
+          // For this example, we assume data.message is already decrypted
+          if (data.timeToDecrypt) {
+            // Decrypt the message
+            const decryptedMessage = CryptoJS.AES.decrypt(
+              data.message,
+              encryptionKey,
+              { iv: data.iv }
+            ).toString(CryptoJS.enc.Utf8);
+            if (!decryptedMessage)
+              throw new Error("Failed to decrypt the message.");
 
-      try {
-        const response = await fetch(`${backendUrl}/api/notes/${id}`);
-        const data = await response.json();
-        if (data.timeToDecrypt) {
-          // Decrypt the message
-          const decryptedMessage = CryptoJS.AES.decrypt(
-            data.message,
-            encryptionKey,
-            { iv: data.iv }
-          ).toString(CryptoJS.enc.Utf8);
-          if (!decryptedMessage)
-            throw new Error("Failed to decrypt the message.");
+            setNote({
+              sender: data.sender,
+              receiver: data.receiver,
+              message: decryptedMessage,
+              revealDate: new Date(data.revealDate).toLocaleString("en-US", {
+                hour: "numeric",
+                minute: "numeric",
+                day: "numeric",
+                month: "numeric",
+                year: "numeric",
+                hour12: true,
+              }),
+            });
+          } else {
+            // Set note as is if timeToDecrypt is false
+            setNote({
+              sender: data.sender,
+              receiver: data.receiver,
+              message: data.message, // This Sweetnote is still hidden! 🤫
+              revealDate: data.revealDate,
+            });
+            // setError("Failed to fetch the note.");
+          }
+        } catch (error) {
+          console.error("Error fetching or decrypting the note:", error);
 
-          setNote({
-            sender: data.sender,
-            receiver: data.receiver,
-            message: decryptedMessage,
-            revealDate: new Date(data.revealDate).toLocaleString("en-US", {
-              hour: "numeric",
-              minute: "numeric",
-              day: "numeric",
-              month: "numeric",
-              year: "numeric",
-              hour12: true,
-            }),
-          });
-        } else {
-          // Set note as is if timeToDecrypt is false
-          setNote({
-            sender: data.sender,
-            receiver: data.receiver,
-            message: data.message, // This Sweetnote is still hidden! 🤫
-            revealDate: data.revealDate,
-          });
-          // setError("Failed to fetch the note.");
+          setError("An error occurred. Please try again later.");
         }
-      } catch (error) {
-        console.error("Error fetching or decrypting the note:", error);
+      };
 
-        setError("An error occurred. Please try again later.");
-      }
-    };
+      fetchNote();
+    }
+  }, [encryptionKey, id, backendUrl]);
 
-    fetchNote();
-  }, [id, searchParams, backendUrl, navigate]);
   // Once the note is loaded, register service worker and subscribe for push notifications.
   useEffect(() => {
     if (note) {
@@ -204,6 +209,10 @@ function ViewNote() {
       window.open(whatsappURL, "_blank");
     }
   };
+
+  if (!encryptionKey || !note) {
+    return <div>Loading note...</div>;
+  }
 
   return (
     <div className="view-note-container">
