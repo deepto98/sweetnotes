@@ -1,5 +1,10 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+   NavLink,
+} from "react-router-dom";
 import CreateNote from "./CreateNote";
 import ViewNote from "./ViewNote";
 import "./App.css";
@@ -10,17 +15,26 @@ function App() {
   return (
     <Router>
       <div className="view-note-container">
-      <Header /> {/* This displays the logo and title on every page */}
-
+        <Header /> {/* This displays the logo and title on every page */}
         <nav className="navbar">
-          <Link className="nav-link" to="/">
+          <NavLink
+            to="/"
+            end
+            className={({ isActive }) =>
+              isActive ? "nav-link active" : "nav-link"
+            }
+          >
             Create Note
-          </Link>
-          <Link className="nav-link" to="/your-notes">
+          </NavLink>
+          <NavLink
+            to="/your-notes"
+            className={({ isActive }) =>
+              isActive ? "nav-link active" : "nav-link"
+            }
+          >
             Your Notes
-          </Link>
+          </NavLink>
         </nav>
-
         <Routes>
           <Route path="/" element={<CreateNote />} />
           <Route path="/notes/:id" element={<ViewNote />} />

@@ -245,10 +245,17 @@ a {
   text-decoration: none;
   font-size: 1.2em;
   color: #ff6f61;
+  transition: color 0.3s ease;
 }
 
 .nav-link:hover {
   color: #ff4c3b;
+}
+
+.nav-link.active {
+  color: #ff4c3b;
+  font-weight: bold;
+  border-bottom: 1px solid #ff4c3b;  
 }
 
 .view-note-container,

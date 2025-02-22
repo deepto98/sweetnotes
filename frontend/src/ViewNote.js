@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useSearchParams, useNavigate } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import CryptoJS from "crypto-js";
 import { v4 as uuidv4 } from "uuid";
 
@@ -9,7 +9,6 @@ function ViewNote() {
   const [note, setNote] = useState(null);
   const [error, setError] = useState("");
   const [copyButtonText, setCopyButtonText] = useState("Copy Link");
-  const navigate = useNavigate();
   const [encryptionKey, setEncryptionKey] = useState(null);
 
   const backendUrl = process.env.REACT_APP_BACKEND_API_URL;
