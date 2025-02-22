@@ -276,7 +276,7 @@ a {
   border-radius: 12px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
   max-width: 450px;
-  width: 90%; /* Default width for all devices */
+  width: 450px;
   text-align: left;
   transition: all 0.3s ease;
   display: flex;
@@ -355,9 +355,6 @@ a {
   font-size: 1.2em;
   margin-top: 20px;
   color: #666;
-}
-
-.notes-list {
 }
 
 .header-container {

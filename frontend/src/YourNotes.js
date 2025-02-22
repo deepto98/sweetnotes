@@ -1,3 +1,4 @@
+import CryptoJS from "crypto-js";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -8,6 +9,20 @@ const YourNotes = () => {
   const navigate = useNavigate();
   const backendUrl = process.env.REACT_APP_BACKEND_API_URL;
   const itemsPerPage = 5;
+
+  // Function to decrypt a note's message using CryptoJS
+  const decryptNoteMessage = (encryptedMessage, encryptionKey, iv) => {
+    try {
+      // Parse IV from hex if needed (assuming encryptionKey is a string)
+      const decrypted = CryptoJS.AES.decrypt(encryptedMessage, encryptionKey, {
+        iv: CryptoJS.enc.Hex.parse(iv),
+      }).toString(CryptoJS.enc.Utf8);
+      return decrypted;
+    } catch (error) {
+      console.error("Decryption error for note:", error);
+      return null;
+    }
+  };
 
   useEffect(() => {
     // Iterate over all localStorage keys and filter those starting with "note-key-"
@@ -64,19 +79,39 @@ const YourNotes = () => {
     <div className="your-notes-container">
       {error && <div className="error-message">{error}</div>}
       {notes.length === 0 ? (
-        <p className="empty-message">You haven't viewed any notes yet.</p>
+        <p className="empty-message">You don't have any notes yet.</p>
       ) : (
         <>
           <div className="notes-list">
             {displayedNotes.map((note) => {
               const now = new Date();
               const noteRevealDate = new Date(note.revealDate);
-              const snippet =
-                now >= noteRevealDate
-                  ? note.message.length > 100
-                    ? note.message.substring(0, 100) + "..."
-                    : note.message
-                  : "This Sweetnote is still hidden! 🤫";
+              let snippet = "";
+              if (now >= noteRevealDate) {
+                // If reveal time has passed, try to get encryption key from localStorage.
+                const storedKey = localStorage.getItem(`note-key-${note.id}`);
+                if (storedKey) {
+                  // Attempt to decrypt the message
+                  const decrypted = decryptNoteMessage(
+                    note.message,
+                    storedKey,
+                    note.iv
+                  );
+                  if (decrypted && decrypted.length > 0) {
+                    snippet =
+                      decrypted.length > 100
+                        ? decrypted.substring(0, 100) + "..."
+                        : decrypted;
+                  } else {
+                    snippet = "Open to read the note";
+                  }
+                } else {
+                  snippet = "Open to read the note";
+                }
+              } else {
+                // If the reveal time has not passed, show placeholder
+                snippet = "This Sweetnote is still hidden! 🤫";
+              }
               return (
                 <div
                   key={note.id}
@@ -94,7 +129,7 @@ const YourNotes = () => {
                     {new Date(note.revealDate).toLocaleString()}
                   </p>
                   <p>
-                    <strong>Snippet:</strong> {snippet}
+                    <strong>Message:</strong> {snippet}
                   </p>
                 </div>
               );

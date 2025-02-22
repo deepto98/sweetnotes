@@ -85,6 +85,7 @@ function CreateNote() {
       <textarea
         className="form-textarea"
         value={message}
+        placeholder="Your secret message"
         onChange={(e) => setMessage(e.target.value)}
         required
       ></textarea>
