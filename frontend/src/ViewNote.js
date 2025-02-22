@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useSearchParams, useNavigate } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import CryptoJS from "crypto-js";
 import { v4 as uuidv4 } from "uuid";
 
@@ -9,7 +9,6 @@ function ViewNote() {
   const [note, setNote] = useState(null);
   const [error, setError] = useState("");
   const [copyButtonText, setCopyButtonText] = useState("Copy Link");
-  const navigate = useNavigate();
   const [encryptionKey, setEncryptionKey] = useState(null);
 
   const backendUrl = process.env.REACT_APP_BACKEND_API_URL;
@@ -211,58 +210,48 @@ function ViewNote() {
   };
 
   return (
-    <div className="view-note-container">
-      <div className="title-container" onClick={() => navigate("/")}>
-        <img
-          src="/sweetnotes-logo.png"
-          alt="Sweetnotes Logo"
-          className="logo"
-        />
-        <h1 className="title">Sweetnotes</h1>
-      </div>
-      <div className="note-box">
-        {error ? (
-          <p className="error-message">{error}</p>
-        ) : note ? (
-          <>
-            <p>
-              <strong>From:</strong> {note.sender}
-            </p>
-            <p>
-              <strong>To:</strong> {note.receiver}
-            </p>
-            <p>
-              <strong>Message:</strong> {note.message}
-            </p>
-            <p>
-              <strong>Reveal Date: </strong>
-              {new Intl.DateTimeFormat("en-GB", {
-                day: "2-digit",
-                month: "2-digit",
-                year: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-                hour12: true,
-              }).format(new Date(note.revealDate))}{" "}
-            </p>
-            <div className="share-buttons">
-              <button className="copy-button" onClick={copyToClipboard}>
-                {copyButtonText}
-              </button>
-              <button className="whatsapp-button" onClick={shareOnWhatsApp}>
-                <img
-                  src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
-                  alt="WhatsApp"
-                  className="whatsapp-icon"
-                />
-                WhatsApp
-              </button>
-            </div>
-          </>
-        ) : (
-          <p>Loading note...</p>
-        )}
-      </div>
+    <div className="note-box">
+      {error ? (
+        <p className="error-message">{error}</p>
+      ) : note ? (
+        <>
+          <p>
+            <strong>From:</strong> {note.sender}
+          </p>
+          <p>
+            <strong>To:</strong> {note.receiver}
+          </p>
+          <p>
+            <strong>Message:</strong> {note.message}
+          </p>
+          <p>
+            <strong>Reveal Date: </strong>
+            {new Intl.DateTimeFormat("en-GB", {
+              day: "2-digit",
+              month: "2-digit",
+              year: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: true,
+            }).format(new Date(note.revealDate))}{" "}
+          </p>
+          <div className="share-buttons">
+            <button className="copy-button" onClick={copyToClipboard}>
+              {copyButtonText}
+            </button>
+            <button className="whatsapp-button" onClick={shareOnWhatsApp}>
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
+                alt="WhatsApp"
+                className="whatsapp-icon"
+              />
+              WhatsApp
+            </button>
+          </div>
+        </>
+      ) : (
+        <p>Loading note...</p>
+      )}
     </div>
   );
 }

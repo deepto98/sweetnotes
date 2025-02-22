@@ -60,72 +60,61 @@ function CreateNote() {
   };
 
   return (
-    <div className="create-note-container">
-      <div className="title-container" onClick={() => navigate("/")}>
-        <img
-          src="/sweetnotes-logo.png"
-          alt="Sweetnotes Logo"
-          className="logo"
-        />
-        <h1 className="title" onClick={() => navigate("/")}>
-          Sweetnotes
-        </h1>
-      </div>
-      <form className="note-form" onSubmit={handleSubmit}>
-        <label className="form-label">From</label>
-        <input
-          type="text"
-          className="form-input"
-          value={sender}
-          placeholder="Your name"
-          onChange={(e) => setSender(e.target.value)}
-          required
-        />
+    <form className="note-form" onSubmit={handleSubmit}>
+      <label className="form-label">From</label>
+      <input
+        type="text"
+        className="form-input"
+        value={sender}
+        placeholder="Your name"
+        onChange={(e) => setSender(e.target.value)}
+        required
+      />
 
-        <label className="form-label">To</label>
-        <input
-          type="text"
-          className="form-input"
-          value={receiver}
-          placeholder="Your friend's name"
-          onChange={(e) => setReceiver(e.target.value)}
-          required
-        />
+      <label className="form-label">To</label>
+      <input
+        type="text"
+        className="form-input"
+        value={receiver}
+        placeholder="Your friend's name"
+        onChange={(e) => setReceiver(e.target.value)}
+        required
+      />
 
-        <label className="form-label">Message</label>
-        <textarea
-          className="form-textarea"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          required
-        ></textarea>
+      <label className="form-label">Message</label>
+      <textarea
+        className="form-textarea"
+        value={message}
+        placeholder="Your secret message"
+        onChange={(e) => setMessage(e.target.value)}
+        required
+      ></textarea>
 
-        <label className="form-label">Reveal Date</label>
-        <DatePicker
-          selected={revealDate}
-          onChange={(date) => setRevealDate(date)}
-          // showTimeSelect
-          // timeIntervals={1}
+      <label className="form-label">Reveal Date</label>
+      <DatePicker
+        selected={revealDate}
+        onChange={(date) => setRevealDate(date)}
+        // showTimeSelect
+        // timeIntervals={1}
 
-          timeInputLabel="Time:"
-          showTimeInput
-          dateFormat="dd/MM/yyyy h:mm aa"
-          className="form-input"
-          onFocus={(e) => (e.target.readOnly = true)}
-          required
-        />
+        timeInputLabel="Time:"
+        showTimeInput
+        dateFormat="dd/MM/yyyy h:mm aa"
+        className="form-input"
+        onFocus={(e) => (e.target.readOnly = true)}
+        required
+      />
 
-        <button className="submit-button" type="submit" disabled={loading}>
-          {loading ? (
-            <>
-              <span className="loading-circle"></span> Generating
-            </>
-          ) : (
-            "Create Note"
-          )}
-        </button>
-      </form>
-    </div>
+      <button className="submit-button" type="submit" disabled={loading}>
+        {loading ? (
+          <>
+            <span className="loading-circle"></span> Generating
+          </>
+        ) : (
+          "Create Note"
+        )}
+      </button>
+    </form>
   );
 }
 
