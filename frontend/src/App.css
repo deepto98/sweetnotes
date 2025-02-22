@@ -255,7 +255,7 @@ a {
 .nav-link.active {
   color: #ff4c3b;
   font-weight: bold;
-  border-bottom: 1px solid #ff4c3b;  
+  border-bottom: 1px solid #ff4c3b;
 }
 
 .view-note-container,
@@ -286,7 +286,7 @@ a {
 
 .note-summary {
   background: rgb(253, 229, 196);
-
+  text-wrap: wrap;
   padding: 15px;
   border-radius: 6px;
   box-shadow: 0 2px 4px rgba(218, 2, 2, 0.1);
@@ -305,6 +305,8 @@ a {
 
 .note-summary p {
   margin: 0 0;
+  text-wrap: wrap;
+  word-wrap: break-word;
 }
 
 .pagination {
