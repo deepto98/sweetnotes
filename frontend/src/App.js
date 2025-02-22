@@ -3,7 +3,7 @@ import {
   BrowserRouter as Router,
   Routes,
   Route,
-   NavLink,
+  NavLink,
 } from "react-router-dom";
 import CreateNote from "./CreateNote";
 import ViewNote from "./ViewNote";
