@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import CryptoJS from "crypto-js";
 import { v4 as uuidv4 } from "uuid";
-
+import html2canvas from "html2canvas";
+ 
 function ViewNote() {
   const [searchParams, setSearchParams] = useSearchParams();
   const { id } = useParams();
@@ -209,6 +210,37 @@ function ViewNote() {
     }
   };
 
+  // Handler for saving the note as an image
+  const handleSaveAsImage = () => {
+    // Select the note box and the share-buttons div
+    const noteElement = document.querySelector(".note-box");
+    const shareButtons = document.querySelector(".share-buttons");
+
+    // Temporarily hide the share-buttons div if it exists
+    let originalDisplay;
+    if (shareButtons) {
+      originalDisplay = shareButtons.style.display;
+      shareButtons.style.display = "none";
+    }
+    noteElement.style.boxShadow = "none";
+
+    // Use html2canvas to capture the noteElement
+    html2canvas(noteElement).then((canvas) => {
+      const dataUrl = canvas.toDataURL("image/png");
+      const link = document.createElement("a");
+      link.href = dataUrl;
+      link.download = `sweetnote-${id}.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      // Restore the share-buttons display
+      if (shareButtons) {
+        shareButtons.style.display = originalDisplay || "";
+      }
+    });
+  };
+
   return (
     <div className="note-box">
       {error ? (
@@ -246,6 +278,9 @@ function ViewNote() {
                 className="whatsapp-icon"
               />
               WhatsApp
+            </button>
+            <button className="image-button" onClick={handleSaveAsImage}>
+              Save As Image
             </button>
           </div>
         </>
