@@ -111,7 +111,8 @@ a {
 /* Buttons */
 .submit-button,
 .copy-button,
-.whatsapp-button {
+.whatsapp-button,
+.image-button {
   width: 100%;
   padding: 12px 15px;
   font-size: 1.2em;
@@ -120,6 +121,14 @@ a {
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.3s ease;
+}
+.image-button {
+  background-color: #ff6f61;
+  color: #fff;
+}
+
+.image-button:hover {
+  background-color: #e85a4f;
 }
 
 .submit-button {
@@ -138,8 +147,7 @@ a {
 .copy-button {
   background-color: #007bff;
   color: #ffffff;
-  margin-bottom: 10px;
-}
+ }
 
 .copy-button:hover {
   background-color: #0056b3;
