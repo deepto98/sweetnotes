@@ -3,7 +3,7 @@ import { useParams, useSearchParams } from "react-router-dom";
 import CryptoJS from "crypto-js";
 import { v4 as uuidv4 } from "uuid";
 import html2canvas from "html2canvas";
- 
+
 function ViewNote() {
   const [searchParams, setSearchParams] = useSearchParams();
   const { id } = useParams();
@@ -212,33 +212,62 @@ function ViewNote() {
 
   // Handler for saving the note as an image
   const handleSaveAsImage = () => {
-    // Select the note box and the share-buttons div
+    // Select the note-box and header elements from the DOM.
     const noteElement = document.querySelector(".note-box");
-    const shareButtons = document.querySelector(".share-buttons");
+    const headerElement = document.querySelector(".header-container"); // ensure this class exists in your Header component
 
-    // Temporarily hide the share-buttons div if it exists
-    let originalDisplay;
-    if (shareButtons) {
-      originalDisplay = shareButtons.style.display;
-      shareButtons.style.display = "none";
+    if (!noteElement || !headerElement) {
+      alert("Required elements for screenshot not found!");
+      return;
     }
-    noteElement.style.boxShadow = "none";
 
-    // Use html2canvas to capture the noteElement
-    html2canvas(noteElement).then((canvas) => {
-      const dataUrl = canvas.toDataURL("image/png");
-      const link = document.createElement("a");
-      link.href = dataUrl;
-      link.download = `sweetnote-${id}.png`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+    // Create a container to hold both the header and the note content
+    const screenshotContainer = document.createElement("div");
+    screenshotContainer.style.backgroundColor = "#ffecd2"; // set background color
+    screenshotContainer.style.padding = "20px"; // add padding
+    screenshotContainer.style.paddingLeft = "60px";
+    screenshotContainer.style.display = "inline-block";
+    screenshotContainer.style.borderRadius = "8px";
 
-      // Restore the share-buttons display
-      if (shareButtons) {
-        shareButtons.style.display = originalDisplay || "";
+    // Clone header and note elements
+    const headerClone = headerElement.cloneNode(true);
+    const noteClone = noteElement.cloneNode(true);
+
+    // Remove share buttons from the note clone
+    const shareButtons = noteClone.querySelector(".share-buttons");
+    if (shareButtons) {
+      shareButtons.remove();
+    }
+    // Optionally remove extra styling (like box-shadow) that might not look good in the screenshot
+    noteClone.style.boxShadow = "none";
+    noteClone.style.padding = "30px 40px"; // add padding
+    headerClone.style.paddingRight = "30px"; // add padding
+
+    // Append the clones to the container
+    screenshotContainer.appendChild(headerClone);
+    screenshotContainer.appendChild(noteClone);
+
+    // Position the container off-screen so it doesn't affect the UI
+    screenshotContainer.style.position = "absolute";
+    screenshotContainer.style.top = "-9999px";
+    screenshotContainer.style.alignItems = "center";
+    screenshotContainer.style.justifyContent = "center";
+
+    document.body.appendChild(screenshotContainer);
+
+    // Use html2canvas to capture the container
+    html2canvas(screenshotContainer, { backgroundColor: "#ffecd2" }).then(
+      (canvas) => {
+        const dataUrl = canvas.toDataURL("image/png");
+        const link = document.createElement("a");
+        link.href = dataUrl;
+        link.download = `sweetnote-${id}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        document.body.removeChild(screenshotContainer);
       }
-    });
+    );
   };
 
   return (
